@@ -111,12 +111,18 @@ public class VlcjideoApplication  extends  Application {
 		APIResponse apiResponse = new APIResponse();
 
 		if (!StringUtils.isEmpty(videoChangeRequest.getUrl())) {
-//			streamingStage.
-//			videoImageView.
 			if (!StringUtils.isEmpty(videoChangeRequest.getTitle()) && streamingStage != null){
 				streamingStage.setTitle(videoChangeRequest.getTitle());
 			}
+			if (log.isInfoEnabled()){
+				log.info(String.format(" BEFORE No. of tracks %d",embeddedMediaPlayer.video().trackCount()));
+			}
 			embeddedMediaPlayer.media().play(videoChangeRequest.getUrl());
+			if (log.isInfoEnabled()){
+				log.info(String.format("AFTER No. of tracks %d",embeddedMediaPlayer.video().trackCount()));
+			}
+			embeddedMediaPlayer.video().setTrack(embeddedMediaPlayer.video().trackCount());
+			;
 			embeddedMediaPlayer.controls().setPosition(0.4f);
 			apiResponse.setStatus("OK");
 		}else{
@@ -127,7 +133,6 @@ public class VlcjideoApplication  extends  Application {
 
 		apiResponse.setErrorCode("");
 		apiResponse.setErrorMessage("");
-
 		return ResponseEntity.ok(apiResponse);
 	}
 
