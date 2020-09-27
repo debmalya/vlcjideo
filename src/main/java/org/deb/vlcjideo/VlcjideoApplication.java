@@ -122,7 +122,7 @@ public class VlcjideoApplication  extends  Application {
 				log.info(String.format("AFTER No. of tracks %d",embeddedMediaPlayer.video().trackCount()));
 			}
 			embeddedMediaPlayer.video().setTrack(embeddedMediaPlayer.video().trackCount());
-			;
+			
 			embeddedMediaPlayer.controls().setPosition(0.4f);
 			apiResponse.setStatus("OK");
 		}else{
