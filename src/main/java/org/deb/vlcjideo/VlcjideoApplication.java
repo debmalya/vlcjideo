@@ -8,6 +8,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.deb.vlcjideo.adapter.VLCJMediaAdapter;
+import org.deb.vlcjideo.service.URLService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
@@ -24,6 +26,9 @@ public class VlcjideoApplication  extends  Application {
 	private final MediaPlayerFactory mediaPlayerFactory;
 
 	private final EmbeddedMediaPlayer embeddedMediaPlayer;
+
+	@Autowired
+	private URLService urlService;
 
 	private ImageView videoImageView;
 
@@ -75,7 +80,11 @@ public class VlcjideoApplication  extends  Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
-		embeddedMediaPlayer.media().play("https://www.youtube.com/watch?v=gMFL5TY5D0E");
+		if (log.isInfoEnabled()){
+			log.info(String.format("Trying to play %s",urlService.getURL()));
+		}
+
+		embeddedMediaPlayer.media().play(urlService.getURL());
 
 		embeddedMediaPlayer.controls().setPosition(0.4f);
 	}
