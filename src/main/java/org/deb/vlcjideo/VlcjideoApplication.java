@@ -57,11 +57,12 @@ public class VlcjideoApplication extends Application {
 
 	@Override
 	public void init() {
+//		register the main FxbootApplication class in the spring container with the call getAutowireCapableBeanFactory (). AutowireBean (this)
+		SpringApplication.run(getClass()).getAutowireCapableBeanFactory().autowireBean(this);
 		this.videoImageView = new ImageView();
 		this.videoImageView.setPreserveRatio(true);
 
 		embeddedMediaPlayer.videoSurface().set(videoSurfaceForImageView(this.videoImageView));
-		SpringApplication.run(getClass()).getAutowireCapableBeanFactory().autowireBean(this);
 
 	}
 
