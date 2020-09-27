@@ -8,10 +8,19 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.deb.vlcjideo.adapter.VLCJMediaAdapter;
+import org.deb.vlcjideo.dto.APIResponse;
+import org.deb.vlcjideo.dto.VideoDTORequest;
 import org.deb.vlcjideo.service.URLService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
@@ -21,6 +30,8 @@ import static uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurfaceFactor
 
 @SpringBootApplication
 @Slf4j
+@RestController("Modify RTSP video URL and play with JavaFX")
+@RequestMapping("api/v0/video")
 public class VlcjideoApplication  extends  Application {
 
 	private final MediaPlayerFactory mediaPlayerFactory;
@@ -39,7 +50,6 @@ public class VlcjideoApplication  extends  Application {
 	}
 
 	public static void main(String[] args) {
-
 //		SpringApplication.run(VlcjideoApplication.class, args);
 		Application.launch();
 	}
@@ -96,5 +106,26 @@ public class VlcjideoApplication  extends  Application {
 		mediaPlayerFactory.release();
 	}
 
+	@PostMapping("/set")
+	public ResponseEntity<APIResponse> setURL(@RequestBody final VideoDTORequest videoChangeRequest){
+		if (log.isInfoEnabled()){
+			log.info(String.format("Incoming request : %s",videoChangeRequest));
+		}
+		APIResponse apiResponse = new APIResponse();
+
+		if (!StringUtils.isEmpty(videoChangeRequest.getUrl())) {
+			apiResponse.setStatus("OK");
+			embeddedMediaPlayer.media().play(videoChangeRequest.getUrl());
+		}else{
+			apiResponse.setErrorCode(String.valueOf(HttpStatus.BAD_REQUEST));
+			apiResponse.setErrorMessage("Please specify URL.");
+			return ResponseEntity.badRequest().body(apiResponse);
+		}
+
+		apiResponse.setErrorCode("");
+		apiResponse.setErrorMessage("");
+
+		return ResponseEntity.ok(apiResponse);
+	}
 
 }
