@@ -1,5 +1,13 @@
 package org.deb.vlcjideo.fx;
 
+import static uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurfaceFactory.videoSurfaceForImageView;
+
+import java.util.List;
+
+import org.deb.vlcjideo.adapter.VLCJMediaAdapter;
+import org.springframework.boot.SpringApplication;
+import org.springframework.stereotype.Component;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
@@ -7,16 +15,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.SpringApplication;
-import org.springframework.stereotype.Component;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
-import uk.co.caprica.vlcj.player.base.MediaPlayer;
-import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
-
-import java.util.List;
-
-import static uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurfaceFactory.videoSurfaceForImageView;
 
 /**
  *
@@ -25,7 +25,9 @@ import static uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurfaceFactor
 @Slf4j
 public class VlcjJavaFxApplication extends Application {
 
-    private final MediaPlayerFactory mediaPlayerFactory;
+   
+
+	private final MediaPlayerFactory mediaPlayerFactory;
 
     private final EmbeddedMediaPlayer embeddedMediaPlayer;
 
@@ -34,23 +36,7 @@ public class VlcjJavaFxApplication extends Application {
     public VlcjJavaFxApplication() {
         this.mediaPlayerFactory = new MediaPlayerFactory();
         this.embeddedMediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
-        this.embeddedMediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter() {
-            @Override
-            public void playing(MediaPlayer mediaPlayer) {
-            }
-
-            @Override
-            public void paused(MediaPlayer mediaPlayer) {
-            }
-
-            @Override
-            public void stopped(MediaPlayer mediaPlayer) {
-            }
-
-            @Override
-            public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
-            }
-        });
+        this.embeddedMediaPlayer.events().addMediaPlayerEventListener(new VLCJMediaAdapter());
     }
 
     @Override
@@ -93,8 +79,6 @@ public class VlcjJavaFxApplication extends Application {
         primaryStage.setTitle("vlcj JavaFX");
         primaryStage.setScene(scene);
         primaryStage.show();
-
-//        embeddedMediaPlayer.media().play("rtsp://live:cyc10P11v3@192.168.137.43:554/video.h264");
 
         embeddedMediaPlayer.media().play("https://www.youtube.com/watch?v=gMFL5TY5D0E");
 
