@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.media.*;
+import uk.co.caprica.vlcj.player.base.State;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import java.util.List;
@@ -117,13 +119,34 @@ public class VlcjideoApplication  extends  Application {
 			if (log.isInfoEnabled()){
 				log.info(String.format(" BEFORE No. of tracks %d",embeddedMediaPlayer.video().trackCount()));
 			}
-			embeddedMediaPlayer.media().play(videoChangeRequest.getUrl());
-			if (log.isInfoEnabled()){
-				log.info(String.format("AFTER No. of tracks %d",embeddedMediaPlayer.video().trackCount()));
+			boolean isReadyForChange = embeddedMediaPlayer.media().prepare(videoChangeRequest.getUrl(),null);
+			if (isReadyForChange) {
+				if (log.isInfoEnabled()) {
+					log.info(String.format(" READY for track change"));
+				}
+//				embeddedMediaPlayer.media().play(videoChangeRequest.getUrl());
+
+			}else{
+				if (log.isErrorEnabled()){
+					log.error(" Media is not ready for change");
+				}
 			}
+			if (log.isInfoEnabled()){
+				log.info(String.format(" AFTER No. of tracks %d",embeddedMediaPlayer.video().trackCount()));
+				log.info(String.format(" Track descriptions : %s",embeddedMediaPlayer.video().trackDescriptions()));
+			}
+
+
+            /*
 			embeddedMediaPlayer.video().setTrack(embeddedMediaPlayer.video().trackCount());
-			
-			embeddedMediaPlayer.controls().setPosition(0.4f);
+			boolean isStarted = embeddedMediaPlayer.media().start(videoChangeRequest.getUrl());
+			if (isStarted){
+				if (log.isInfoEnabled()) {
+					log.info(String.format("Modified media started"));
+				}
+			}
+			*/
+//			embeddedMediaPlayer.controls().setPosition(0.4f);
 			apiResponse.setStatus("OK");
 		}else{
 			apiResponse.setErrorCode(String.valueOf(HttpStatus.BAD_REQUEST));
