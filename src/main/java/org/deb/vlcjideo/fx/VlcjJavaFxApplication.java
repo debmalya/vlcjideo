@@ -1,13 +1,5 @@
 package org.deb.vlcjideo.fx;
 
-import static uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurfaceFactory.videoSurfaceForImageView;
-
-import java.util.List;
-
-import org.deb.vlcjideo.adapter.VLCJMediaAdapter;
-import org.springframework.boot.SpringApplication;
-import org.springframework.stereotype.Component;
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
@@ -15,8 +7,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import org.deb.vlcjideo.adapter.VLCJMediaAdapter;
+import org.springframework.boot.SpringApplication;
+import org.springframework.stereotype.Component;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+
+import java.util.List;
+
+import static uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurfaceFactory.videoSurfaceForImageView;
 
 /**
  *
@@ -45,6 +44,7 @@ public class VlcjJavaFxApplication extends Application {
         this.videoImageView.setPreserveRatio(true);
 
         embeddedMediaPlayer.videoSurface().set(videoSurfaceForImageView(this.videoImageView));
+//        the main VlcjJavaFxApplication class in the spring container with the call getAutowireCapableBeanFactory (). AutowireBean (this);
         SpringApplication.run(getClass()).getAutowireCapableBeanFactory().autowireBean(this);
         if (log.isInfoEnabled()){
             log.info("~~~ Initialized VlcjJavaFxApplication ~~~");
