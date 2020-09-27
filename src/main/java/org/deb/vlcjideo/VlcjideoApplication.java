@@ -8,6 +8,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 import org.deb.vlcjideo.fx.VlcjJavaFxApplication;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,7 +22,8 @@ import java.util.List;
 import static uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurfaceFactory.videoSurfaceForImageView;
 
 @SpringBootApplication
-public class VlcjideoApplication extends Application {
+@Slf4j
+public class VlcjideoApplication  extends  Application {
 
 	private final MediaPlayerFactory mediaPlayerFactory;
 
@@ -52,17 +54,28 @@ public class VlcjideoApplication extends Application {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(VlcjideoApplication.class, args);
+		if (log.isInfoEnabled()){
+			log.info("~~~ main started ~~~");
+		}
+//		SpringApplication.run(VlcjideoApplication.class, args);
+		Application.launch();
+		if (log.isInfoEnabled()){
+			log.info("~~~ main ended ~~~");
+		}
 	}
 
 	@Override
 	public void init() {
 //		register the main FxbootApplication class in the spring container with the call getAutowireCapableBeanFactory (). AutowireBean (this)
-		SpringApplication.run(getClass()).getAutowireCapableBeanFactory().autowireBean(this);
+
 		this.videoImageView = new ImageView();
 		this.videoImageView.setPreserveRatio(true);
 
 		embeddedMediaPlayer.videoSurface().set(videoSurfaceForImageView(this.videoImageView));
+		SpringApplication.run(getClass()).getAutowireCapableBeanFactory().autowireBean(this);
+		if (log.isInfoEnabled()){
+			log.info("~~~ Initialized ~~~");
+		}
 
 	}
 
@@ -104,4 +117,6 @@ public class VlcjideoApplication extends Application {
 		embeddedMediaPlayer.release();
 		mediaPlayerFactory.release();
 	}
+
+
 }

@@ -6,7 +6,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
+import org.springframework.stereotype.Component;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
@@ -19,6 +21,8 @@ import static uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurfaceFactor
 /**
  *
  */
+@Component
+@Slf4j
 public class VlcjJavaFxApplication extends Application {
 
     private final MediaPlayerFactory mediaPlayerFactory;
@@ -56,11 +60,17 @@ public class VlcjJavaFxApplication extends Application {
 
         embeddedMediaPlayer.videoSurface().set(videoSurfaceForImageView(this.videoImageView));
         SpringApplication.run(getClass()).getAutowireCapableBeanFactory().autowireBean(this);
+        if (log.isInfoEnabled()){
+            log.info("~~~ Initialized VlcjJavaFxApplication ~~~");
+        }
 
     }
 
     @Override
     public final void start(Stage primaryStage) throws Exception {
+        if (log.isInfoEnabled()){
+            log.info("~~~ Initialized ~~~");
+        }
         List<String> params = getParameters().getRaw();
 
         BorderPane root = new BorderPane();
