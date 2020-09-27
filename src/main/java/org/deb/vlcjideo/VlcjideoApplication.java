@@ -34,7 +34,7 @@ import static uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurfaceFactor
 @Slf4j
 @RestController("Modify RTSP video URL and play with JavaFX")
 @RequestMapping("api/v0/video")
-public class VlcjideoApplication  extends  Application {
+public class VlcjideoApplication extends Application {
 
 	private final MediaPlayerFactory mediaPlayerFactory;
 
@@ -65,7 +65,8 @@ public class VlcjideoApplication  extends  Application {
 		this.videoImageView.setPreserveRatio(true);
 
 		embeddedMediaPlayer.videoSurface().set(videoSurfaceForImageView(this.videoImageView));
-		//		register the main VlcjideoApplication class in the spring container with the call getAutowireCapableBeanFactory (). AutowireBean (this)
+		// register the main VlcjideoApplication class in the spring container with the
+		// call getAutowireCapableBeanFactory (). AutowireBean (this)
 		SpringApplication.run(getClass()).getAutowireCapableBeanFactory().autowireBean(this);
 	}
 
@@ -89,12 +90,12 @@ public class VlcjideoApplication  extends  Application {
 
 		root.setCenter(videoImageView);
 
-		Scene scene = new Scene(root, root.getMaxWidth()/8, root.getHeight()/8, Color.BLACK);
+		Scene scene = new Scene(root, root.getMaxWidth() / 8, root.getHeight() / 8, Color.BLACK);
 		primaryStage.setTitle("vlcj JavaFX");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		streamingStage = primaryStage;
-		embeddedMediaPlayer.media().play(urlService.getURL());
+		embeddedMediaPlayer.media().play(urlService.getURL(),"enable");
 		embeddedMediaPlayer.controls().setPosition(0.4f);
 	}
 
@@ -106,49 +107,46 @@ public class VlcjideoApplication  extends  Application {
 	}
 
 	@PostMapping("/set")
-	public ResponseEntity<APIResponse> setURL(@RequestBody final VideoDTORequest videoChangeRequest){
-		if (log.isInfoEnabled()){
-			log.info(String.format("Incoming request : %s",videoChangeRequest));
+	public ResponseEntity<APIResponse> setURL(@RequestBody final VideoDTORequest videoChangeRequest) {
+		if (log.isInfoEnabled()) {
+			log.info(String.format("Incoming request : %s", videoChangeRequest));
 		}
 		APIResponse apiResponse = new APIResponse();
 
-		if (!StringUtils.isEmpty(videoChangeRequest.getUrl())) {
-			if (!StringUtils.isEmpty(videoChangeRequest.getTitle()) && streamingStage != null){
+		String videoURL = videoChangeRequest.getUrl();
+		if (!StringUtils.isEmpty(videoURL)) {
+			if (!StringUtils.isEmpty(videoChangeRequest.getTitle()) && streamingStage != null) {
 				streamingStage.setTitle(videoChangeRequest.getTitle());
 			}
-			if (log.isInfoEnabled()){
-				log.info(String.format(" BEFORE No. of tracks %d",embeddedMediaPlayer.video().trackCount()));
+			if (log.isInfoEnabled()) {
+				log.info(String.format(" BEFORE Playing track no :%d", embeddedMediaPlayer.video().track()));
+				log.info(String.format(" BEFORE No. of tracks %d", embeddedMediaPlayer.video().trackCount()));
+				log.info(
+						String.format(" BEFORE track description %s", embeddedMediaPlayer.video().trackDescriptions()));
 			}
-			boolean isReadyForChange = embeddedMediaPlayer.media().prepare(videoChangeRequest.getUrl(),null);
-			if (isReadyForChange) {
+
+			boolean isStarted = embeddedMediaPlayer.media().play(videoURL);
+
+			if (isStarted) {
+				int currentTrack = embeddedMediaPlayer.video().setTrack(0);
+
 				if (log.isInfoEnabled()) {
-					log.info(String.format(" READY for track change"));
+					log.info(String.format(" AFTER Playing track no :%d", currentTrack));
+					log.info(String.format(" AFTER No. of tracks %d", embeddedMediaPlayer.video().trackCount()));
+					log.info(String.format(" AFTER Track descriptions : %s",
+							embeddedMediaPlayer.video().trackDescriptions()));
 				}
-//				embeddedMediaPlayer.media().play(videoChangeRequest.getUrl());
-
-			}else{
-				if (log.isErrorEnabled()){
-					log.error(" Media is not ready for change");
+				if (log.isDebugEnabled()) {
+					log.debug(String.format("%s started", videoChangeRequest.getUrl()));
 				}
-			}
-			if (log.isInfoEnabled()){
-				log.info(String.format(" AFTER No. of tracks %d",embeddedMediaPlayer.video().trackCount()));
-				log.info(String.format(" Track descriptions : %s",embeddedMediaPlayer.video().trackDescriptions()));
-			}
-
-
-            /*
-			embeddedMediaPlayer.video().setTrack(embeddedMediaPlayer.video().trackCount());
-			boolean isStarted = embeddedMediaPlayer.media().start(videoChangeRequest.getUrl());
-			if (isStarted){
+			} else {
 				if (log.isInfoEnabled()) {
-					log.info(String.format("Modified media started"));
+					log.info(String.format(" Media is not prepared, cannot be played."));
 				}
 			}
-			*/
-//			embeddedMediaPlayer.controls().setPosition(0.4f);
+
 			apiResponse.setStatus("OK");
-		}else{
+		} else {
 			apiResponse.setErrorCode(String.valueOf(HttpStatus.BAD_REQUEST));
 			apiResponse.setErrorMessage("Please specify URL.");
 			return ResponseEntity.badRequest().body(apiResponse);
