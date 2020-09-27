@@ -13,4 +13,5 @@ import java.net.URL;
 public class VideoDTORequest {
     @NonNull
     private String url;
+    private String title;
 }

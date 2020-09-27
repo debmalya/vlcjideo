@@ -41,6 +41,8 @@ public class VlcjideoApplication  extends  Application {
 	@Autowired
 	private URLService urlService;
 
+	private Stage streamingStage;
+
 	private ImageView videoImageView;
 
 	public VlcjideoApplication() {
@@ -85,17 +87,12 @@ public class VlcjideoApplication  extends  Application {
 
 		root.setCenter(videoImageView);
 
-		Scene scene = new Scene(root, 1200, 675, Color.BLACK);
+		Scene scene = new Scene(root, root.getMaxWidth()/8, root.getHeight()/8, Color.BLACK);
 		primaryStage.setTitle("vlcj JavaFX");
 		primaryStage.setScene(scene);
 		primaryStage.show();
-
-		if (log.isInfoEnabled()){
-			log.info(String.format("Trying to play %s",urlService.getURL()));
-		}
-
+		streamingStage = primaryStage;
 		embeddedMediaPlayer.media().play(urlService.getURL());
-
 		embeddedMediaPlayer.controls().setPosition(0.4f);
 	}
 
@@ -114,8 +111,14 @@ public class VlcjideoApplication  extends  Application {
 		APIResponse apiResponse = new APIResponse();
 
 		if (!StringUtils.isEmpty(videoChangeRequest.getUrl())) {
-			apiResponse.setStatus("OK");
+//			streamingStage.
+//			videoImageView.
+			if (!StringUtils.isEmpty(videoChangeRequest.getTitle()) && streamingStage != null){
+				streamingStage.setTitle(videoChangeRequest.getTitle());
+			}
 			embeddedMediaPlayer.media().play(videoChangeRequest.getUrl());
+			embeddedMediaPlayer.controls().setPosition(0.4f);
+			apiResponse.setStatus("OK");
 		}else{
 			apiResponse.setErrorCode(String.valueOf(HttpStatus.BAD_REQUEST));
 			apiResponse.setErrorMessage("Please specify URL.");
