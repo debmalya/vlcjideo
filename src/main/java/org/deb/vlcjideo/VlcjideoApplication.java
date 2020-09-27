@@ -128,10 +128,10 @@ public class VlcjideoApplication extends Application {
 			boolean isStarted = embeddedMediaPlayer.media().play(videoURL);
 
 			if (isStarted) {
-				int currentTrack = embeddedMediaPlayer.video().setTrack(0);
+//				int currentTrack = embeddedMediaPlayer.video().setTrack(-2);
 
 				if (log.isInfoEnabled()) {
-					log.info(String.format(" AFTER Playing track no :%d", currentTrack));
+					log.info(String.format(" AFTER Playing track no :%d", embeddedMediaPlayer.video().track()));
 					log.info(String.format(" AFTER No. of tracks %d", embeddedMediaPlayer.video().trackCount()));
 					log.info(String.format(" AFTER Track descriptions : %s",
 							embeddedMediaPlayer.video().trackDescriptions()));
