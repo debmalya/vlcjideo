@@ -22,11 +22,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
-import uk.co.caprica.vlcj.media.*;
-import uk.co.caprica.vlcj.player.base.State;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurfaceFactory.videoSurfaceForImageView;
 
@@ -125,9 +124,13 @@ public class VlcjideoApplication extends Application {
 						String.format(" BEFORE track description %s", embeddedMediaPlayer.video().trackDescriptions()));
 			}
 
-			boolean isStarted = embeddedMediaPlayer.media().play(videoURL);
+			AtomicBoolean isStarted = new AtomicBoolean(false);
+			embeddedMediaPlayer.submit(()->{
+				 isStarted.set(embeddedMediaPlayer.media().play(videoURL));
+			});
 
-			if (isStarted) {
+
+			if (isStarted.get()) {
 //				int currentTrack = embeddedMediaPlayer.video().setTrack(-2);
 
 				if (log.isInfoEnabled()) {
