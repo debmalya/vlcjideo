@@ -126,13 +126,11 @@ public class VlcjideoApplication extends Application {
 
 			AtomicBoolean isStarted = new AtomicBoolean(false);
 			embeddedMediaPlayer.submit(()->{
-				 isStarted.set(embeddedMediaPlayer.media().play(videoURL));
+				 isStarted.set(embeddedMediaPlayer.media().start(videoURL));
 			});
 
 
 			if (isStarted.get()) {
-//				int currentTrack = embeddedMediaPlayer.video().setTrack(-2);
-
 				if (log.isInfoEnabled()) {
 					log.info(String.format(" AFTER Playing track no :%d", embeddedMediaPlayer.video().track()));
 					log.info(String.format(" AFTER No. of tracks %d", embeddedMediaPlayer.video().trackCount()));
@@ -142,11 +140,7 @@ public class VlcjideoApplication extends Application {
 				if (log.isDebugEnabled()) {
 					log.debug(String.format("%s started", videoChangeRequest.getUrl()));
 				}
-			} else {
-				if (log.isInfoEnabled()) {
-					log.info(String.format(" Media is not prepared, cannot be played."));
-				}
-			}
+			} 
 
 			apiResponse.setStatus("OK");
 		} else {
