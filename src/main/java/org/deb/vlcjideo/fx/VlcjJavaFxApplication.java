@@ -75,7 +75,7 @@ public class VlcjJavaFxApplication extends Application {
 
         root.setCenter(videoImageView);
 
-        Scene scene = new Scene(root, root.getWidth()/8, root.getHeight()/8, Color.BLACK);
+        Scene scene = new Scene(root, root.getPrefWidth(), root.getPrefHeight(), Color.BLACK);
         primaryStage.setTitle("vlcj JavaFX");
         primaryStage.setScene(scene);
         primaryStage.show();
